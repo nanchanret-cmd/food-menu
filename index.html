@@ -68,7 +68,10 @@
             });
             orderText += `\n💰 សរុបទឹកប្រាក់: $${total.toFixed(2)}`;
 
-            let telegramUrl = "https://t.me/daddy_ret?text=" + encodeURIComponent(orderText);
+            // ផ្ញើផ្ទាល់ទៅកាន់ Telegram ផ្ទាល់ខ្លួនរបស់បង (@daddy_ret)
+            let myTelegramUsername = "daddy_ret"; 
+
+            let telegramUrl = `https://t.me/${myTelegramUsername}?text=` + encodeURIComponent(orderText);
             
             if (tg.openTelegramLink) {
                 tg.openTelegramLink(telegramUrl);
