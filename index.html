@@ -68,6 +68,25 @@
             });
             orderText += `\n💰 សរុបទឹកប្រាក់: $${total.toFixed(2)}`;
 
+            let myTelegramUsername = "daddy_ret"; 
+            let telegramUrl = `https://t.me/${myTelegramUsername}?text=` + encodeURIComponent(orderText);
+            
+            // ប្រើវិធីបើក Link របស់ Telegram WebApp ដោយផ្ទាល់
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.openTelegramLink(telegramUrl);
+            } else {
+                window.open(telegramUrl, '_blank');
+            }
+        }
+            
+            let orderText = "🛒 ការកុម្ម៉ង់ថ្មីពីអតិថិជន:\n";
+            let total = 0;
+            cart.forEach((item, index) => {
+                orderText += `${index + 1}. ${item.name} - $${item.price.toFixed(2)}\n`;
+                total += item.price;
+            });
+            orderText += `\n💰 សរុបទឹកប្រាក់: $${total.toFixed(2)}`;
+
             // ផ្ញើផ្ទាល់ទៅកាន់ Telegram ផ្ទាល់ខ្លួនរបស់បង (@daddy_ret)
             let myTelegramUsername = "daddy_ret"; 
 
