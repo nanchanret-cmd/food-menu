@@ -40,6 +40,9 @@
         tg.expand();
         let cart = [];
 
+        const BOT_TOKEN = "8956380163:AAFLlpJqAKr8PgGoU4hwTPwywiIVD7iHu8c";
+        const OWNER_CHAT_ID = "7399268160";
+
         function add(name, price) {
             cart.push({name, price});
             updateCart();
@@ -54,27 +57,48 @@
             document.getElementById('total').innerText = total.toFixed(2);
         }
 
-        function order() {
+        async function order() {
             if(cart.length === 0) { 
                 alert("សូមជ្រើសរើសមុខម្ហូបជាមុនសិន!"); 
                 return; 
             }
             
-            let orderText = "🛒 ការកុម្ម៉ង់ថ្មីពីអតិថិជន:\n";
+            let user = tg.initDataUnsafe?.user;
+            let customerName = user ? `${user.first_name || ''} ${user.last_name || ''}`.trim() : "អតិថិជន";
+            let username = user?.username ? `@${user.username}` : "គ្មាន Username";
+
+            let orderText = `🔔 <b>មានការកុម្ម៉ង់ថ្មី!</b>\n`;
+            orderText += `👤 <b>អ្នកកុម្ម៉ង់:</b> ${customerName} (${username})\n\n`;
+            orderText += `<b>មុខម្ហូប:</b>\n`;
+            
             let total = 0;
             cart.forEach((item, index) => {
                 orderText += `${index + 1}. ${item.name} - $${item.price.toFixed(2)}\n`;
                 total += item.price;
             });
-            orderText += `\n💰 សរុបទឹកប្រាក់: $${total.toFixed(2)}`;
+            orderText += `\n💰 <b>សរុបទឹកប្រាក់:</b> $${total.toFixed(2)}`;
 
-            let myTelegramUsername = "daddy_ret"; 
-            let telegramUrl = `https://t.me/${myTelegramUsername}?text=` + encodeURIComponent(orderText);
-            
-            if (tg.openTelegramLink) {
-                tg.openTelegramLink(telegramUrl);
-            } else {
-                window.location.href = telegramUrl;
+            try {
+                let response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        chat_id: OWNER_CHAT_ID,
+                        text: orderText,
+                        parse_mode: "HTML"
+                    })
+                });
+
+                if (response.ok) {
+                    alert("✅ ការបញ្ជាទិញបានជោគជ័យ! ហាងបានទទួលសារកុម្ម៉ង់របស់លោកអ្នកហើយ។");
+                    cart = [];
+                    updateCart();
+                    tg.close();
+                } else {
+                    alert("❌ មានបញ្ហាក្នុងការផ្ញើសារ។ សូមព្យាយាមម្ដងទៀត!");
+                }
+            } catch (error) {
+                alert("❌ បរាជ័យក្នុងការភ្ជាប់ទៅកាន់ប្រព័ន្ធ!");
             }
         }
     </script>
