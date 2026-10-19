@@ -43,7 +43,9 @@
         function add(name, price) {
             cart.push({name, price});
             updateCart();
-            tg.HapticFeedback.impactOccurred('medium');
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('medium');
+            }
         }
 
         function updateCart() {
@@ -66,7 +68,13 @@
             });
             orderText += `\n💰 សរុបទឹកប្រាក់: $${total.toFixed(2)}`;
 
-            tg.sendData(orderText);
+            let telegramUrl = "https://t.me/Boiling_Pans_Restaurant_bot?text=" + encodeURIComponent(orderText);
+            
+            if (tg.openTelegramLink) {
+                tg.openTelegramLink(telegramUrl);
+            } else {
+                window.location.href = telegramUrl;
+            }
         }
     </script>
 </body>
