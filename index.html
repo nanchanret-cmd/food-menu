@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boiling Pans Restaurant</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { font-family: sans-serif; background: #f4f6f8; padding: 15px; margin: 0; color: #333; }
+        h2 { text-align: center; color: #ff4757; }
+        .card { background: white; border-radius: 12px; padding: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .btn { background: #ff4757; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        .cart-container { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 15px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
+        .total-price { font-weight: bold; font-size: 16px; color: #2f3542; }
+        .order-btn { background: #2ed573; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h2>🍜 Boiling Pans Restaurant</h2>
+    
+    <div class="card">
+        <div><strong>មីឆាពិសេស</strong><br><span style="color: #666;">$3.00</span></div>
+        <button class="btn" onclick="add('មីឆាពិសេស', 3)">+ បន្ថែម</button>
+    </div>
+
+    <div class="card">
+        <div><strong>ស៊ុបខាប់គ្រឿងសមុទ្រ</strong><br><span style="color: #666;">$5.00</span></div>
+        <button class="btn" onclick="add('ស៊ុបខាប់គ្រឿងសមុទ្រ', 5)">+ បន្ថែម</button>
+    </div>
+
+    <div style="height: 80px;"></div>
+
+    <div class="cart-container">
+        <div class="total-price">សរុប: $<span id="total">0.00</span></div>
+        <button class="order-btn" onclick="order()">🛒 បញ្ជាទិញ (<span id="count">0</span>)</button>
+    </div>
+
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+        let cart = [];
+
+        function add(name, price) {
+            cart.push({name, price});
+            updateCart();
+            tg.HapticFeedback.impactOccurred('medium');
+        }
+
+        function updateCart() {
+            document.getElementById('count').innerText = cart.length;
+            let total = cart.reduce((sum, item) => sum + item.price, 0);
+            document.getElementById('total').innerText = total.toFixed(2);
+        }
+
+        function order() {
+            if(cart.length === 0) { 
+                alert("សូមជ្រើសរើសមុខម្ហូបជាមុនសិន!"); 
+                return; 
+            }
+            
+            let orderText = "🛒 ការកុម្ម៉ង់ថ្មីពីអតិថិជន:\n";
+            let total = 0;
+            cart.forEach((item, index) => {
+                orderText += `${index + 1}. ${item.name} - $${item.price.toFixed(2)}\n`;
+                total += item.price;
+            });
+            orderText += `\n💰 សរុបទឹកប្រាក់: $${total.toFixed(2)}`;
+
+            tg.sendData(orderText);
+        }
+    </script>
+</body>
+</html>
